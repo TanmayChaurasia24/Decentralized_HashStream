@@ -1,5 +1,4 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { SearchInput } from "./search-input";
@@ -11,15 +10,9 @@ export const HomeNavbar = () => {
       <div className="flex items-center gap-4 w-full">
         {/* menu and logo */}
         <div className="flex items-center flex-shrink-0">
-          <SidebarTrigger />
+          <SidebarTrigger className="cursor-pointer" />
           <Link href={"/"}>
             <div>
-              {/* <Image
-                src="/logo_hashstream.jpg"
-                height={200}
-                width={200}
-                alt="logo"
-              ></Image> */}
               <h1 className="text-2xl font-bold text-primary">HashStream</h1>
             </div>
           </Link>
@@ -30,7 +23,7 @@ export const HomeNavbar = () => {
         </div>
 
         <div className="flex-shrink-0 items-center flex gap-4">
-            <AuthButton/>
+          <AuthButton />
         </div>
       </div>
     </nav>
