@@ -1,9 +1,19 @@
-import Image from "next/image";
+import { trpc, HydrateClient } from "@/trpc/server";
+import { PageClient } from "./client";
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
-export default function Home() {
+export default async function Home() {
+  void trpc.hello.prefetch({
+    text: "tanmay",
+  });
   return (
-    <div className="w-full h-full">
-      Videos
-    </div>
-  )
+    <HydrateClient>
+      <Suspense fallback={<p>loading...</p>}>
+        <ErrorBoundary fallback={<p>Error...</p>}>
+          <PageClient />
+        </ErrorBoundary>
+      </Suspense>
+    </HydrateClient>
+  );
 }
