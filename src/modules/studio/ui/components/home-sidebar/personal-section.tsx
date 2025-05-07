@@ -28,13 +28,13 @@ const items = [
     title: "All PLaylist",
     url: "/playlist",
     icon: ListVideoIcon,
-    auth: true
+    auth: true,
   },
 ];
 
 export const PersonalSection = () => {
   const clerk = useClerk();
-  const {isSignedIn} = useAuth();
+  const { isSignedIn } = useAuth();
   return (
     <SidebarGroup>
       <SidebarContent>
@@ -46,12 +46,12 @@ export const PersonalSection = () => {
                 asChild
                 isActive={false}
                 onClick={(e) => {
-                  if(!isSignedIn && item.auth) {
+                  if (!isSignedIn && item.auth) {
                     e.preventDefault();
                     return clerk.openSignIn();
                   }
                 }}
-              > 
+              >
                 <Link href={item.url} className="flex items-center gap-4">
                   <item.icon />
                   <span className="text-sm">{item.title}</span>

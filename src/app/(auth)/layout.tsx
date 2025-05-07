@@ -1,4 +1,3 @@
-import layout from "../(home)/layout";
 
 interface LayoutProps {
   children: React.ReactNode;

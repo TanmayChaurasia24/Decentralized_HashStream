@@ -7,34 +7,33 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { HistoryIcon, ListVideoIcon, ThumbsUpIcon } from "lucide-react";
-import { useClerk, useAuth } from "@clerk/nextjs";
+import { FlameIcon, HomeIcon, PlaySquareIcon } from "lucide-react";
 import Link from "next/link";
+import { useClerk, useAuth } from "@clerk/nextjs";
 
 const items = [
   {
-    title: "History",
-    url: "/playlist/history",
-    icon: HistoryIcon,
+    title: "Home",
+    url: "/",
+    icon: HomeIcon,
+  },
+  {
+    title: "Subcriptions",
+    url: "/feed/subcriptions",
+    icon: PlaySquareIcon,
     auth: true,
   },
   {
-    title: "Liked Videos",
-    url: "/playlist/liked",
-    icon: ThumbsUpIcon,
-    auth: true,
-  },
-  {
-    title: "All PLaylist",
-    url: "/playlist",
-    icon: ListVideoIcon,
-    auth: true
+    title: "Trending",
+    url: "/feed/trending",
+    icon: FlameIcon,
   },
 ];
 
-export const PersonalSection = () => {
+export const MainSection = () => {
   const clerk = useClerk();
-  const {isSignedIn} = useAuth();
+  const { isSignedIn } = useAuth();
+
   return (
     <SidebarGroup>
       <SidebarContent>
@@ -46,12 +45,12 @@ export const PersonalSection = () => {
                 asChild
                 isActive={false}
                 onClick={(e) => {
-                  if(!isSignedIn && item.auth) {
+                  if (!isSignedIn && item.auth) {
                     e.preventDefault();
                     return clerk.openSignIn();
                   }
                 }}
-              > 
+              >
                 <Link href={item.url} className="flex items-center gap-4">
                   <item.icon />
                   <span className="text-sm">{item.title}</span>

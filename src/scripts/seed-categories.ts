@@ -26,7 +26,7 @@ async function main() {
   console.log("running seed categories...");
 
   try {
-    const values: any = categories_name.map((name) => ({
+    const values = categories_name.map((name) => ({
       name,
       description: `Videos related to ${name.toLowerCase()}`,
     }));
@@ -36,7 +36,7 @@ async function main() {
     console.log("categories seeded successfully!");
     
   } catch (error) {
-    console.log("error while seeding the video categories");
+    console.log("error while seeding the video categories", error);
     process.exit(1);
   }
 }

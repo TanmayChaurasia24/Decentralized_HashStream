@@ -32,7 +32,7 @@ const CategoriesSectionSuspense = ({ categoryId }: CategoriesSectionProps) => {
     label: name,
   }));
 
-  const onSelect = (value: string | null) => {
+  const onSelect = (value: string | null | undefined) => {
     const url = new URL(window.location.href);
 
     if (value) {
