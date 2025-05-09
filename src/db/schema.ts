@@ -1,4 +1,3 @@
-import { Description } from "@radix-ui/react-dialog";
 import { relations } from "drizzle-orm";
 import {
   pgTable,
@@ -6,7 +5,6 @@ import {
   timestamp,
   uuid,
   uniqueIndex,
-  PgTable,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable(
