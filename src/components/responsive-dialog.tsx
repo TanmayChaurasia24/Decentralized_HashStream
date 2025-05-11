@@ -1,0 +1,44 @@
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "./ui/drawer";
+import { Dialog, DialogHeader, DialogTitle } from "./ui/dialog";
+import { DialogContent } from "@radix-ui/react-dialog";
+
+interface ResponsiveDialogProps {
+  children: React.ReactNode;
+  open: boolean;
+  title: string;
+  onOpenChange: (open: boolean) => void;
+}
+
+export const ResponsiveDialog = ({
+  children,
+  open,
+  title,
+  onOpenChange,
+}: ResponsiveDialogProps) => {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <Drawer open={open} onOpenChange={onOpenChange}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>{title}</DrawerTitle>
+          </DrawerHeader>
+          {children}
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        {children}
+      </DialogContent>
+    </Dialog>
+  );
+};
