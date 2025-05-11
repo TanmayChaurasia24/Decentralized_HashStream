@@ -1,7 +1,6 @@
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "./ui/drawer";
-import { Dialog, DialogHeader, DialogTitle } from "./ui/dialog";
-import { DialogContent } from "@radix-ui/react-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 
 interface ResponsiveDialogProps {
   children: React.ReactNode;
