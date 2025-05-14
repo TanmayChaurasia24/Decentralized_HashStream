@@ -2,7 +2,6 @@ import { db } from "@/db";
 import { videos } from "@/db/schema";
 import { mux } from "@/lib/mux";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { PassThrough } from "stream";
 
 export const videosRouter = createTRPCRouter({
   create: protectedProcedure.mutation(async ({ ctx }) => {
@@ -24,9 +23,11 @@ export const videosRouter = createTRPCRouter({
       })
       .returning();
 
+    console.log("video inserting at database is: ", video);
+
     return {
       video: video,
-      url: upload.url
+      url: upload.url,
     };
   }),
 });

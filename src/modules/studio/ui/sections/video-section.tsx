@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DEFAULT_LIMIT } from "@/constants";
+import { VideoThumbnail } from "@/modules/videos/ui/components/video-thumbnail";
 import { trpc } from "@/trpc/client";
 import { useRouter } from "next/navigation";
 
@@ -47,8 +48,23 @@ export const VideoSection = () => {
             {data.pages
               .flatMap((page) => page.items)
               .map((video) => (
-                <TableRow className="cursor-pointer" key={video.id} onClick={() => router.push(`/studio/video/${video.id}`)}>
-                  <TableCell>{video.title}</TableCell>
+                <TableRow
+                  className="cursor-pointer"
+                  key={video.id}
+                  onClick={() => router.push(`/studio/video/${video.id}`)}
+                >
+                  <TableCell>
+                    <div className="flex items-center gap-4">
+                      <div className="relative aspect-video w-36 shrink-0">
+                        <VideoThumbnail
+                          imageUrl={video.thumbnailUrl}
+                          previewUrl={video.previewUrl}
+                          title={video.title}
+                          duration={video.duration || 0}
+                        />
+                      </div>
+                    </div>
+                  </TableCell>
                   <TableCell>Visibility</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Date</TableCell>
