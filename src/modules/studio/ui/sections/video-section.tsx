@@ -16,8 +16,21 @@ import { trpc } from "@/trpc/client";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { Globe2Icon, LockIcon } from "lucide-react";
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const VideoSection = () => {
+  return (
+    <Suspense fallback={<VideoSectionSkeleton />}>
+      <ErrorBoundary fallback={<p>Error...</p>}>
+        <VideoSectionSuspense />
+      </ErrorBoundary>
+    </Suspense>
+  );
+};
+
+export const VideoSectionSuspense = () => {
   const router = useRouter();
 
   const [data, query] = trpc.studio.getMany.useSuspenseInfiniteQuery(
@@ -106,5 +119,36 @@ export const VideoSection = () => {
         fetchNextPage={query.fetchNextPage}
       />
     </div>
+  );
+};
+
+const VideoSectionSkeleton = () => {
+  return (
+    <>
+      <div className="">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="pl-6 w-[510px]">Video</TableHead>
+              <TableHead>Visibility</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead className="text-right">Views</TableHead>
+              <TableHead className="text-right">Comment</TableHead>
+              <TableHead className="text-right pr-6">Likes</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <TableRow key={index}>
+                <div className="flex items-center gap-4">
+                  <Skeleton />
+                </div>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </>
   );
 };
