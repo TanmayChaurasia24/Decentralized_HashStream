@@ -2,7 +2,6 @@ import { db } from "@/db";
 import { videos } from "@/db/schema";
 import { mux } from "@/lib/mux";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { PassThrough } from "stream";
 
 export const videosRouter = createTRPCRouter({
   create: protectedProcedure.mutation(async ({ ctx }) => {
@@ -12,6 +11,16 @@ export const videosRouter = createTRPCRouter({
       new_asset_settings: {
         passthrough: userId,
         playback_policies: ["public"],
+        input: [
+          {
+            generated_subtitles: [
+              {
+                language_code: "en",
+                name: "English",
+              },
+            ],
+          },
+        ],
       },
       cors_origin: "*",
     });
@@ -21,12 +30,14 @@ export const videosRouter = createTRPCRouter({
       .values({
         userId,
         title: "Untitled",
+        muxStatus: "Waiting",
+        muxUploadId: upload.id,
       })
       .returning();
 
     return {
       video: video,
-      url: upload.url
+      url: upload.url,
     };
   }),
 });
