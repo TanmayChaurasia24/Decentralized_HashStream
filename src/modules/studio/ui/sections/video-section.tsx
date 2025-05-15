@@ -10,9 +10,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DEFAULT_LIMIT } from "@/constants";
+import { mux } from "@/lib/mux";
 import { VideoThumbnail } from "@/modules/videos/ui/components/video-thumbnail";
 import { trpc } from "@/trpc/client";
 import { useRouter } from "next/navigation";
+import { format } from "date-fns";
+import { Globe2Icon, LockIcon } from "lucide-react";
 
 export const VideoSection = () => {
   const router = useRouter();
@@ -63,11 +66,32 @@ export const VideoSection = () => {
                           duration={video.duration || 0}
                         />
                       </div>
+                      <div className="flex flex-col overflow-hidden gap-y-1">
+                        <span className="text-sm line-clamp-1">
+                          {video.title}
+                        </span>
+                        <span className="text-xm text-muted-foreground line-clamp-1">
+                          {video.decription || "No description"}
+                        </span>
+                      </div>
                     </div>
                   </TableCell>
-                  <TableCell>Visibility</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Date</TableCell>
+                  <TableCell>
+                    <div className="flex items-center">
+                      {video.visibility === "private" ? (
+                        <LockIcon className="size-4 mr-2" />
+                      ) : (
+                        <Globe2Icon className="size-4 mr-2" />
+                      )}
+                      {video.visibility}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center">{video.muxStatus}</div>
+                  </TableCell>
+                  <TableCell>
+                    {format(new Date(video.createdAt), "d MMM yyyy")}
+                  </TableCell>
                   <TableCell>Views</TableCell>
                   <TableCell>Comment</TableCell>
                   <TableCell>Likes</TableCell>

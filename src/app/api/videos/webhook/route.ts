@@ -3,6 +3,7 @@ import { videos } from "@/db/schema";
 import { mux } from "@/lib/mux";
 import {
   VideoAssetCreatedWebhookEvent,
+  VideoAssetDeletedWebhookEvent,
   VideoAssetErroredWebhookEvent,
   VideoAssetReadyWebhookEvent,
   VideoAssetTrackReadyWebhookEvent,
@@ -16,8 +17,8 @@ type WebhookEvent =
   | VideoAssetCreatedWebhookEvent
   | VideoAssetReadyWebhookEvent
   | VideoAssetErroredWebhookEvent
-  | VideoAssetTrackReadyWebhookEvent;
-
+  | VideoAssetTrackReadyWebhookEvent
+  | VideoAssetDeletedWebhookEvent;
 export const POST = async (request: Request) => {
   if (!SIGNING_SECRET) {
     throw new Error("MUX_WEBHOOK_SERET is not set");
@@ -43,20 +44,22 @@ export const POST = async (request: Request) => {
 
   switch (payload.type as WebhookEvent["type"]) {
     case "video.asset.created": {
-      const data = payload.data as VideoAssetCreatedWebhookEvent["data"];
+      console.log("video created assest called!");
 
+      const data = payload.data as VideoAssetCreatedWebhookEvent["data"];
       if (!data.upload_id) {
         return new Response("no upload ID found", { status: 400 });
       }
+      console.log("video created assest data is: ", data);
 
-      await db
+      const updated = await db
         .update(videos)
         .set({
           muxAssetId: data.id,
           muxStatus: data.status,
         })
         .where(eq(videos.muxUploadId, data.upload_id));
-
+      console.log("updated db is: ", updated);
       break;
     }
 
@@ -87,6 +90,61 @@ export const POST = async (request: Request) => {
           duration,
         })
         .where(eq(videos.muxUploadId, data.upload_id));
+
+      break;
+    }
+
+    case "video.asset.errored": {
+      const data = payload.data as VideoAssetErroredWebhookEvent["data"];
+
+      if (!data.upload_id) {
+        return new Response("Missing upload ID", { status: 400 });
+      }
+
+      await db
+        .update(videos)
+        .set({
+          muxStatus: data.status,
+        })
+        .where(eq(videos.muxUploadId, data.upload_id));
+
+      break;
+    }
+
+    case "video.asset.deleted": {
+      const data = payload.data as VideoAssetDeletedWebhookEvent["data"];
+
+      if (!data.upload_id) {
+        return new Response("Missing upload ID", {
+          status: 400,
+        });
+      }
+
+      await db.delete(videos).where(eq(videos.muxUploadId, data.upload_id));
+
+      break;
+    }
+
+    case "video.asset.track.ready": {
+      const data = payload.data as VideoAssetTrackReadyWebhookEvent["data"] & {
+        asset_id: string;
+      };
+
+      const assetId = data.asset_id;
+      const trackId = data.id;
+      const status = data.status;
+
+      if (!data) {
+        return new Response("missing asset ID", { status: 400 });
+      }
+
+      await db
+        .update(videos)
+        .set({
+          muxTrackId: trackId,
+          muxTrackStatus: status,
+        })
+        .where(eq(videos.muxAssetId, assetId));
 
       break;
     }

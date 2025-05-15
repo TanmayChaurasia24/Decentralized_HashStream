@@ -1,3 +1,4 @@
+import { formatDuration } from "@/lib/utils";
 import Image from "next/image";
 
 interface VideoThumbnailProps {
@@ -16,7 +17,7 @@ export const VideoThumbnail = ({
   return (
     <div className="relative">
       {/* thumbnail wrapper */}
-      <div className="relative w-full overflow-hidden rounded-xl aspect-video">
+      <div className="relative w-full overflow-hidden rounded-xl aspect-video group">
         <Image
           src={imageUrl ?? "/placeholder.svg"}
           alt={title}
@@ -24,6 +25,7 @@ export const VideoThumbnail = ({
           className="h-full s-full object-cover group-hover:opacity-0"
         />
         <Image
+          unoptimized={!!previewUrl}
           src={previewUrl ?? "/placeholder.svg"}
           alt={title}
           fill
@@ -33,7 +35,7 @@ export const VideoThumbnail = ({
 
       {/* video duration box */}
       <div className="absolute bottom-2 right-2 px-1 py-0.5 rounded bg-black/80 text-white text-xs font-medium">
-        {duration}
+        {formatDuration(duration)}
       </div>
     </div>
   );
