@@ -67,7 +67,7 @@ export const VideoSectionSuspense = () => {
                 <TableRow
                   className="cursor-pointer"
                   key={video.id}
-                  onClick={() => router.push(`/studio/video/${video.id}`)}
+                  onClick={() => router.push(`/studio/videos/${video.id}`)}
                 >
                   <TableCell>
                     <div className="flex items-center gap-4">
@@ -105,9 +105,9 @@ export const VideoSectionSuspense = () => {
                   <TableCell>
                     {format(new Date(video.createdAt), "d MMM yyyy")}
                   </TableCell>
-                  <TableCell>Views</TableCell>
-                  <TableCell>Comment</TableCell>
-                  <TableCell>Likes</TableCell>
+                  <TableCell className="text-right text-sm">Views</TableCell>
+                  <TableCell className="text-right text-sm">Comment</TableCell>
+                  <TableCell className="text-right pr-6 text-sm">Likes</TableCell>
                 </TableRow>
               ))}
           </TableBody>
@@ -141,9 +141,15 @@ const VideoSectionSkeleton = () => {
           <TableBody>
             {Array.from({ length: 5 }).map((_, index) => (
               <TableRow key={index}>
-                <div className="flex items-center gap-4">
-                  <Skeleton />
-                </div>
+                <TableCell className="pl-6">
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="h-20 w-36" />
+                    <div className="flex flex-col gap-2">
+                      <Skeleton className="h-4 w-[100px]" />
+                      <Skeleton className="h-3 w-[150px]" />
+                    </div>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
