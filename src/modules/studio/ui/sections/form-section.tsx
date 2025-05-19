@@ -9,7 +9,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { videoUpdateSchema } from "@/db/schema";
 import { trpc } from "@/trpc/client";
-import { CopyIcon, MoreVerticalIcon, Trash2Icon } from "lucide-react";
+import {
+  CopyIcon,
+  Globe2Icon,
+  LockIcon,
+  MoreVerticalIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useForm } from "react-hook-form";
@@ -34,6 +40,7 @@ import {
 import { toast } from "sonner";
 import { VideoPlayer } from "@/modules/videos/ui/components/video-player";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface FormSectionProps {
   videoId: string;
@@ -54,6 +61,7 @@ const FormSectionSkeleton = () => {
 };
 
 const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
+  const router = useRouter();
   const utils = trpc.useUtils();
   const [video] = trpc.studio.getOne.useSuspenseQuery({ id: videoId });
   const [categories] = trpc.categories.getMany.useSuspenseQuery();
@@ -63,6 +71,17 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
       utils.studio.getMany.invalidate();
       utils.studio.getOne.invalidate({ id: videoId });
       toast.error("Video Updated!");
+    },
+    onError: () => {
+      toast.error("something went wrong!");
+    },
+  });
+
+  const remove = trpc.videos.remove.useMutation({
+    onSuccess: () => {
+      utils.studio.getMany.invalidate();
+      toast.error("Video deleted!");
+      router.push("/studio");
     },
     onError: () => {
       toast.error("something went wrong!");
@@ -98,7 +117,9 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => remove.mutate({ id: videoId })}
+                >
                   <Trash2Icon className="size-4 mr-2" />
                   Delete
                 </DropdownMenuItem>
@@ -190,14 +211,70 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                           https://hashmap.onrender.com
                         </p>
                       </Link>
-                      <Button type="button" variant={"ghost"} size={"icon"} className="shrink-0" onClick={() => {}} disabled={false}>
+                      <Button
+                        type="button"
+                        variant={"ghost"}
+                        size={"icon"}
+                        className="shrink-0"
+                        onClick={() => {}}
+                        disabled={false}
+                      >
                         <CopyIcon />
                       </Button>
                     </div>
                   </div>
                 </div>
+
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-col gap-y-1">
+                    <p className="text-muted-foreground text-xs">
+                      Video Status
+                    </p>
+                    <p className="text-sm">{video.muxStatus || "preparing"}</p>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-col gap-y-1">
+                    <p className="text-muted-foreground text-xs">
+                      Subtitle Status
+                    </p>
+                    <p className="text-sm">
+                      {video.muxTrackStatus || "no_subtitle"}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Visibility</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value ?? undefined}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select visibility" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem key="public" value="public">
+                        <Globe2Icon className="size-4 mr-2" />
+                        Public
+                      </SelectItem>
+                      <SelectItem key="private" value="private">
+                        <LockIcon className="size-4 mr-2" />
+                        Private
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </div>
       </form>
