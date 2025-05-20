@@ -6,7 +6,7 @@ import { and, desc, eq, lt, or } from "drizzle-orm";
 import { z } from "zod";
 export const studioRouter = createTRPCRouter({
   getOne: protectedProcedure
-    .input(z.object({ id: z.string()}))
+    .input(z.object({ id: z.string().uuid()}))
     .query(async ({ ctx, input }) => {
       const { id: userId } = ctx.user;
       const { id } = input;
